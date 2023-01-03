@@ -2,7 +2,7 @@
 
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
-use std::os::raw::c_void;
+use std::{os::raw::c_void, ffi::CString};
 use std::ptr;
 use std::sync::Arc;
 
@@ -452,6 +452,80 @@ impl Into<String> for CanDo {
     }
 }
 
+/// Features which are optionally supported by a plugin. These are queried by the host at run time.
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub enum HostCanDo {
+	SendEvents,
+	SendMidiEvent,
+	SendTimeInfo,
+	ReceiveEvents,
+	ReceiveMidiEvent,
+	ReportConnectionChanges,
+	AcceptIOChanges,
+	SizeWindow,
+	Offline,
+	OpenFileSelector,
+	CloseFileSelector,
+	StartStopProcess,
+	ShellCategory,
+	SendMidiEventFlagIsRealtime,
+
+    Other(String),
+}
+
+impl HostCanDo {
+    // TODO: implement FromStr
+    #![allow(clippy::should_implement_trait)]
+    /// Converts a string to a `HostCanDo` instance. Any given string that does not match the predefined
+    /// values will return a `HostCanDo::Other` value.
+    pub fn from_str(s: &str) -> HostCanDo {
+        use self::HostCanDo::*;
+
+        match s {
+            "sendVstEvents" => SendEvents,
+            "sendVstMidiEvent" => SendMidiEvent,
+            "sendVstTimeInfo" => SendTimeInfo,
+            "receiveVstEvents" => ReceiveEvents,
+            "receiveVstMidiEvent" => ReceiveMidiEvent,
+            "reportConnectionChanges" => ReportConnectionChanges,
+            "acceptIOChanges" => AcceptIOChanges,
+            "sizeWindow" => SizeWindow,
+            "offline" => Offline,
+            "openFileSelector" => OpenFileSelector,
+            "closeFileSelector" => CloseFileSelector,
+            "startStopProcess" => StartStopProcess,
+            "shellCategory" => ShellCategory,
+            "sendVstMidiEventFlagIsRealtime" => SendMidiEventFlagIsRealtime,
+            otherwise => Other(otherwise.to_string()),
+        }
+    }
+}
+
+impl Into<String> for HostCanDo {
+    fn into(self) -> String {
+        use self::HostCanDo::*;
+
+        match self {
+            SendEvents => "sendVstEvents".to_string(),
+            SendMidiEvent => "sendVstMidiEvent".to_string(),
+            SendTimeInfo => "sendVstTimeInfo".to_string(),
+            ReceiveEvents => "receiveVstEvents".to_string(),
+            ReceiveMidiEvent => "receiveVstMidiEvent".to_string(),
+            ReportConnectionChanges => "reportConnectionChanges".to_string(),
+            AcceptIOChanges => "acceptIOChanges".to_string(),
+            SizeWindow => "sizeWindow".to_string(),
+            Offline => "offline".to_string(),
+            OpenFileSelector => "openFileSelector".to_string(),
+            CloseFileSelector => "closeFileSelector".to_string(),
+            StartStopProcess => "startStopProcess".to_string(),
+            ShellCategory => "shellCategory".to_string(),
+            SendMidiEventFlagIsRealtime => "sendVstMidiEventFlagIsRealtime".to_string(),
+            Other(other) => other,
+        }
+    }
+}
+
 /// Must be implemented by all VST plugins.
 ///
 /// All methods except `new` and `get_info` provide a default implementation
@@ -557,6 +631,9 @@ pub trait Plugin: Send {
     fn get_tail_size(&self) -> isize {
         0
     }
+
+    /// Get the plugin to paint its UI
+    fn editor_idle(&mut self) {}
 
     /// Process an audio buffer containing `f32` values.
     ///
@@ -961,6 +1038,20 @@ impl Host for HostCallback {
     /// Refresh UI after the plugin's parameters changed.
     fn update_display(&self) {
         self.callback(self.effect, host::OpCode::UpdateDisplay, 0, 0, ptr::null_mut(), 0.0);
+    }
+
+    fn can_do(&self, value: HostCanDo) -> i32 {
+        let value_string: String = value.into();
+        if let Ok(host_can_do) = CString::new(value_string.as_str()) {
+            self.callback(self.effect, host::OpCode::CanDo, 0, 0, host_can_do.as_ptr() as *mut std::ffi::c_void, 0.0) as i32
+        }
+        else {
+            0
+        }
+    }
+
+    fn size_window(&self, index: i32, value: isize) -> i32 {
+        self.callback(self.effect, host::OpCode::SizeWindow, index, value, ptr::null_mut(), 0.0) as i32
     }
 }
 

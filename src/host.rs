@@ -14,6 +14,7 @@ use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::{fmt, ptr, slice};
 
+use crate::plugin::HostCanDo;
 use crate::{
     api::{self, consts::*, AEffect, PluginFlags, PluginMain, Supported, TimeInfo},
     buffer::AudioBuffer,
@@ -199,6 +200,12 @@ pub trait Host {
 
     /// Signal that automation of a parameter ended (the knob is no longer been touched / mouse button up).
     fn end_edit(&self, index: i32) {}
+
+    /// Vst plugin asking whether the host can do a particular type of thing
+    fn can_do(&self, value: HostCanDo) -> i32 { 0 }
+
+    /// Ask the host to size the plugin window.
+    fn size_window(&self, index: i32, value: isize) -> i32 { 0 }
 
     /// Get the plugin ID of the currently loading plugin.
     ///
@@ -681,6 +688,10 @@ impl Plugin for PluginInstance {
             params: self.params.clone(),
             is_open: false,
         }))
+    }
+
+    fn editor_idle(&mut self) {
+        self.dispatch(plugin::OpCode::EditorIdle, 0, 0, ptr::null_mut(), 0.0);
     }
 }
 

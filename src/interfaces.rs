@@ -6,6 +6,7 @@ use std::cell::Cell;
 use std::os::raw::{c_char, c_void};
 use std::{mem, slice};
 
+use crate::plugin::HostCanDo;
 use crate::{
     api::{self, consts::*, AEffect, TimeInfo},
     buffer::AudioBuffer,
@@ -321,6 +322,12 @@ pub fn host_dispatch(
         // ...
         Ok(OpCode::CanDo) => {
             info!("Plugin is asking if host can: {}.", read_string(ptr));
+            return host.can_do(HostCanDo::from_str(read_string(ptr).as_str())) as isize
+        }
+
+        // ...
+        Ok(OpCode::SizeWindow) => {
+            return host.size_window(index, value) as isize
         }
 
         Ok(OpCode::GetVendorVersion) => return host.get_info().0,
@@ -346,6 +353,7 @@ pub fn host_dispatch(
             };
         }
         Ok(OpCode::GetBlockSize) => return host.get_block_size(),
+        Ok(OpCode::CurrentId) => return host.get_plugin_id() as isize,
 
         _ => {
             trace!("VST: Got unimplemented host opcode ({:?})", opcode);
