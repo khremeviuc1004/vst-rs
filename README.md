@@ -6,6 +6,8 @@
 
 `vst-rs` is a library for creating VST2 plugins in the Rust programming language.
 
+This fork wires in host can do, host plugin size window and plugin editor idle operations dispatch so that a VST host can function properly for a number of plugins.
+
 This library is a work in progress, and as such it does not yet implement all
 functionality. It can create basic VST plugins without an editor interface.
 
