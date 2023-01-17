@@ -31,7 +31,7 @@ pub enum Event<'a> {
 ///
 /// These are sent to the plugin before `Plugin::processing()` or `Plugin::processing_f64()` is
 /// called.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub struct MidiEvent {
     /// The raw midi data associated with this event.
     pub data: [u8; 3],
