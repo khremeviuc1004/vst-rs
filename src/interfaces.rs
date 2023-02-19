@@ -321,7 +321,6 @@ pub fn host_dispatch(
 
         // ...
         Ok(OpCode::CanDo) => {
-            info!("Plugin is asking if host can: {}.", read_string(ptr));
             return host.can_do(HostCanDo::from_str(read_string(ptr).as_str())) as isize
         }
 
