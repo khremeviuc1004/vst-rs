@@ -668,7 +668,7 @@ pub trait Plugin: Send {
     /// ```
     ///
     /// This method is only called while the plugin is in the *resumed* state.
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         // For each input and output
         for (input, output) in buffer.zip() {
             // For each input sample and output sample in buffer

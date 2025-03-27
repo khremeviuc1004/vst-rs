@@ -36,7 +36,7 @@ pub extern "C" fn process_replacing(
     let (input_count, output_count) = (info.inputs as usize, info.outputs as usize);
     let mut buffer =
         unsafe { AudioBuffer::from_raw(input_count, output_count, raw_inputs, raw_outputs, samples as usize) };
-    plugin.process(&mut buffer);
+    plugin.process(&mut buffer, samples);
 }
 
 /// VST2.4 replacing function with `f64` values.

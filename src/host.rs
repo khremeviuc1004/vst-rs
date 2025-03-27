@@ -616,7 +616,7 @@ impl Plugin for PluginInstance {
         self.opcode(plugin::OpCode::GetTailSize)
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         if buffer.input_count() < self.info.inputs as usize {
             panic!("Too few inputs in AudioBuffer");
         }
@@ -628,7 +628,7 @@ impl Plugin for PluginInstance {
                 self.get_effect(),
                 buffer.raw_inputs().as_ptr() as *const *const _,
                 buffer.raw_outputs().as_mut_ptr() as *mut *mut _,
-                buffer.samples() as i32,
+                samples,
             )
         }
     }
