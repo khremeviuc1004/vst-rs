@@ -230,7 +230,7 @@ impl Plugin for LadderFilter {
         }
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         for (input_buffer, output_buffer) in buffer.zip() {
             for (input_sample, output_sample) in input_buffer.iter().zip(output_buffer) {
                 self.tick_pivotal(*input_sample);

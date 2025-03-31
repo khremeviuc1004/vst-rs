@@ -87,7 +87,7 @@ impl Plugin for MyPlugin {
         self.sample_rate = sample_rate;
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         // 6. In the process method, iterate over changed parameters and do
         // for each what you would previously do in set_parameter. Since this
         // runs in the processing thread, it has mutable access to the Plugin.

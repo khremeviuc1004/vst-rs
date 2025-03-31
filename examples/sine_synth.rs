@@ -102,7 +102,7 @@ impl Plugin for SineSynth {
         self.sample_rate = f64::from(rate);
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         let samples = buffer.samples();
         let (_, mut outputs) = buffer.split();
         let output_count = outputs.len();

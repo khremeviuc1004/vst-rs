@@ -66,7 +66,7 @@ impl Plugin for GainEffect {
     }
 
     // Here is where the bulk of our audio processing code goes.
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         // Read the amplitude from the parameter object
         let amplitude = self.params.amplitude.get();
         // First, we destructure our audio buffer into an arbitrary number of

@@ -41,7 +41,7 @@ impl Plugin for MyPlugin {
         self.recv_buffer.store_events(events.events());
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         for (input, output) in buffer.zip() {
             for (in_sample, out_sample) in input.iter().zip(output) {
                 *out_sample = *in_sample;

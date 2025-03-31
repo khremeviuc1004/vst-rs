@@ -117,7 +117,7 @@ impl Plugin for DimensionExpander {
         }
     }
 
-    fn process(&mut self, buffer: &mut AudioBuffer<f32>) {
+    fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32) {
         let (inputs, outputs) = buffer.split();
 
         // Assume 2 channels

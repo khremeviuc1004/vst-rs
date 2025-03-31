@@ -752,7 +752,13 @@ impl PluginParameters for PluginParametersInstance {
             &mut ptr as *mut *mut u8 as *mut c_void,
             0.0,
         );
-        let slice = unsafe { slice::from_raw_parts(ptr, len as usize) };
+        let slice = if ptr.is_null() {
+            vec![]
+        }
+        else {
+            let slice = unsafe { slice::from_raw_parts(ptr, len as usize) };
+            slice.to_vec()
+        };
         slice.to_vec()
     }
 
