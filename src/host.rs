@@ -811,7 +811,8 @@ impl PluginParameters for PluginParametersInstance {
 /// let inputs = vec![vec![0.0; 1000]; 2];
 /// let mut outputs = vec![vec![0.0; 1000]; 2];
 /// let mut audio_buffer = host_buffer.bind(&inputs, &mut outputs);
-/// plugin.process(&mut audio_buffer);
+/// let samples = audio_buffer.samples() as i32;
+/// plugin.process(&mut audio_buffer, samples);
 /// # }
 /// ```
 pub struct HostBuffer<T: Float> {

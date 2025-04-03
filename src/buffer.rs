@@ -421,7 +421,7 @@ impl SendEventBuffer {
     /// #
     /// #     fn get_info(&self) -> Info { Default::default() }
     /// #
-    /// fn process(&mut self, buffer: &mut AudioBuffer<f32>){
+    /// fn process(&mut self, buffer: &mut AudioBuffer<f32>, samples: i32){
     ///     let events: Vec<MidiEvent> = vec![
     ///         // ...
     ///     ];
